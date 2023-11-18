@@ -98,3 +98,23 @@ func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request){
 
 	fmt.Fprintf(w, "更新成功")
 }
+
+func(t *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request){
+		// パスパラメータからIDを取得
+		vars := mux.Vars(r)
+		idStr := vars["id"]
+	
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid id", http.StatusBadRequest)
+			return
+		}
+
+		// 削除
+		if err := t.u.DeleteTask(id);err != nil{
+			http.Error(w, "Invalid request delete", http.StatusBadRequest)
+			return
+		}
+
+		fmt.Fprintf(w, "削除成功")
+}

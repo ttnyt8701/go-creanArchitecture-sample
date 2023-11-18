@@ -71,7 +71,7 @@ func main(){
 	r.HandleFunc("/tasks", taskController.CreateTask).Methods("POST")
 	r.HandleFunc("/tasks/{id}", taskController.GetTask).Methods("GET")
 	r.HandleFunc("/tasks/{id}/update", taskController.UpdateTask).Methods("PUT")
-	// r.HandleFunc("/tasks/{id}/delete", taskController.DeleteTask).Methods("DELETE")
+	r.HandleFunc("/tasks/{id}/delete", taskController.DeleteTask).Methods("DELETE")
 
 	// サーバー起動 - r: リクエストの処理 - log.Fatal: エラーが発生したときにログ出力してプログラム終了
 	log.Fatal(http.ListenAndServe(":8199", r))
