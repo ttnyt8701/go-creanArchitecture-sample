@@ -46,11 +46,10 @@ func (t *TaskController) GetAllTasks(w http.ResponseWriter, r *http.Request){
 	if err != nil{
 		fmt.Fprintf(w, "Invalid id: %s", err)
 		return 
-	}else{
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(task)
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(task)
 }
 
 func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request){
@@ -64,26 +63,38 @@ func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request){
 	if err != nil{
 		message := fmt.Sprintf("投稿失敗:%s",err)
 		http.Error(w, message, http.StatusBadRequest)
-	}else{
-		fmt.Fprintf(w, "投稿成功:")
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(task.Title)
+		return
 	}
+
+	fmt.Fprintf(w, "投稿成功:")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(task.Title)
+	
 }
 
-// func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request){
-// 	// パスパラメータからIDを取得
-// 	vars := mux.Vars(r)
-//     idStr := vars["id"]
+func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request){
+	// パスパラメータからIDを取得
+	vars := mux.Vars(r)
+    idStr := vars["id"]
 
-// 	id, err := strconv.Atoi(idStr)
-//     if err != nil {
-//         http.Error(w, "Invalid id", http.StatusBadRequest)
-//         return
-//     }
+	id, err := strconv.Atoi(idStr)
+    if err != nil {
+        http.Error(w, "Invalid id", http.StatusBadRequest)
+        return
+    }
 
-// 	// 更新情報取得
+	// 更新情報取得
+	var task model.Task
+	if err := json.NewDecoder(r.Body).Decode(&task); err != nil{
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
 
-// 	err := t.u.UpdateTask(id,"title")
+	// 更新
+	if err := t.u.UpdateTask(id,task.Title);err != nil{
+		http.Error(w, "Invalid request update", http.StatusBadRequest)
+		return
+	}
 
-// }
+	fmt.Fprintf(w, "更新成功")
+}
