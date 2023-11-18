@@ -1,11 +1,3 @@
-/*
-ユースケース
-ビジネスロジックを実装する層
-データの処理、変換、制御...
-コントローラーとリポジトリーの橋渡し
-コントローラーからの入力を受け取り、レポジトリー層を使い、データの保存や取得を行いコントローラーに返す。
-*/
-
 package usecase
 
 import (
@@ -22,10 +14,6 @@ type TaskUsecase interface {
 	DeleteTask(id int) error
 }
 
-/*
-usecaseはレポジトリーに依存している。
-レポジトリーを使ってDB操作をしてコントローラーに渡す。
-*/
 type taskUsecase struct{
 	r repository.TaskRepository
 

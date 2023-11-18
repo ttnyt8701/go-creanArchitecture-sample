@@ -20,8 +20,9 @@ func NewTaskController(u usecase.TaskUsecase) *TaskController {
 }
 
 func (t *TaskController) GetTask(w http.ResponseWriter, r *http.Request) {
+	// リクエストパラメーラからidを取得し整数に変換
     vars := mux.Vars(r)
-    idStr := vars["id"] // パスパラメータからIDを取得
+    idStr := vars["id"]
 
     id, err := strconv.Atoi(idStr)
     if err != nil {
@@ -29,6 +30,7 @@ func (t *TaskController) GetTask(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+	// 取得
     task, err := t.u.GetTasks(id)
     if err != nil {
         http.Error(w, "Error fetching task", http.StatusInternalServerError)
@@ -41,7 +43,6 @@ func (t *TaskController) GetTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *TaskController) GetAllTasks(w http.ResponseWriter, r *http.Request){
-	// DBから全てのタスクを取得
 	task, err := t.u.GetAllTasks()
 	if err != nil{
 		fmt.Fprintf(w, "Invalid id: %s", err)
@@ -53,12 +54,13 @@ func (t *TaskController) GetAllTasks(w http.ResponseWriter, r *http.Request){
 }
 
 func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request){
+	// ボディから情報取得してセット
 	var task model.Task
-
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil{
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 	}
 
+	// 作成
 	err := t.u.CreateTask(task.Title)
 	if err != nil{
 		message := fmt.Sprintf("投稿失敗:%s",err)
@@ -73,7 +75,7 @@ func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request){
 }
 
 func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request){
-	// パスパラメータからIDを取得
+	// リクエストパラメーラからidを取得し整数に変換
 	vars := mux.Vars(r)
     idStr := vars["id"]
 
@@ -83,14 +85,13 @@ func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request){
         return
     }
 
-	// 更新情報取得
+	// ボディから情報取得してセット
 	var task model.Task
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil{
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	// 更新
 	if err := t.u.UpdateTask(id,task.Title);err != nil{
 		http.Error(w, "Invalid request update", http.StatusBadRequest)
 		return
@@ -100,7 +101,7 @@ func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request){
 }
 
 func(t *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request){
-		// パスパラメータからIDを取得
+		// リクエストパラメーラからidを取得し整数に変換
 		vars := mux.Vars(r)
 		idStr := vars["id"]
 	
@@ -110,7 +111,6 @@ func(t *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request){
 			return
 		}
 
-		// 削除
 		if err := t.u.DeleteTask(id);err != nil{
 			http.Error(w, "Invalid request delete", http.StatusBadRequest)
 			return
