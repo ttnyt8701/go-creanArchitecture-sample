@@ -1,13 +1,12 @@
 package usecase
 
 import (
-	"fmt"
 	"go-sample/model"
 	"go-sample/repository"
 )
 
 type TaskUsecase interface {
-	CreateTask(title string) error
+	CreateTask(title string) (int, error)
 	GetTasks(id int)(*model.Task, error)
 	GetAllTasks()([]model.Task, error)
 	UpdateTask(id int,title string) error
@@ -23,16 +22,19 @@ func NewTaskUsecase(r repository.TaskRepository) TaskUsecase {
 	return &taskUsecase{r: r}
 }
 
-func (u *taskUsecase) CreateTask(title string) error{
+func (u *taskUsecase) CreateTask(title string) (int, error){
 	task := model.Task{Title: title}
 	err := task.Validate()
 	if err != nil{
-		return err
+		return 0, err
 	}
 	
 	id, err := u.r.Create(&task)
-	fmt.Println(id)
-	return err
+	if err != nil{
+		return 0, err
+	}
+
+	return id, err
 }
 
 func (u *taskUsecase) GetTasks(id int) (*model.Task, error){

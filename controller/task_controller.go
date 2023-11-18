@@ -61,16 +61,17 @@ func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request){
 	}
 
 	// 作成
-	err := t.u.CreateTask(task.Title)
+	id, err := t.u.CreateTask(task.Title)
 	if err != nil{
 		message := fmt.Sprintf("投稿失敗:%s",err)
 		http.Error(w, message, http.StatusBadRequest)
 		return
 	}
 
-	fmt.Fprintf(w, "投稿成功:")
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(task.Title)
+	w.WriteHeader(http.StatusOK)
+	message := fmt.Sprintf("投稿成功 {id:%v , Title:%s}",id,task.Title)
+	json.NewEncoder(w).Encode(message)
 	
 }
 

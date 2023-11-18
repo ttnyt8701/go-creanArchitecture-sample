@@ -40,7 +40,6 @@ func (r *taskRepositoryImpl) Reads() ([]model.Task, error) {
     if err != nil {
         return nil, err
     }
-    defer rows.Close()
 
     var tasks []model.Task
     for rows.Next() {
